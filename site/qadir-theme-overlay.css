@@ -1,0 +1,24 @@
+/* Qadir identity overlay for the compiled home page (index.html is a build artifact).
+   Scoped under html body [data-qadir-theme] so it outranks the page's inline rules.
+   Remove the <link> in index.html to revert. */
+html body [data-qadir-theme="light"]{background-color:#f7faf8!important;color:#0b1b2b}
+html body [data-qadir-theme="dark"]{background-color:#07131f!important;color:#f3efe6}
+html body [data-qadir-theme="light"] .bg-emerald-700,html body [data-qadir-theme="light"] .bg-emerald-600{background-color:#087f5b!important}
+html body [data-qadir-theme="light"] .bg-emerald-700:hover,html body [data-qadir-theme="light"] .bg-emerald-600:hover{background-color:#066a4c!important}
+html body [data-qadir-theme="dark"] .bg-emerald-700,html body [data-qadir-theme="dark"] .bg-emerald-600{background-color:#087f5b!important}
+html body [data-qadir-theme="dark"] .bg-white,html body [data-qadir-theme="dark"] .bg-slate-50,html body [data-qadir-theme="dark"] .bg-slate-100{background-color:#0d1e2b!important;border-color:#1d3446!important;color:#f3efe6!important}
+html body [data-qadir-theme="dark"] .bg-slate-900{background-color:#0d1e2b!important}
+html body [data-qadir-theme="dark"] .bg-slate-800{background-color:#122837!important}
+html body [data-qadir-theme="dark"] .border-slate-700{border-color:#1d3446!important}
+html body [data-qadir-theme="dark"] .bg-emerald-50,html body [data-qadir-theme="dark"] .bg-emerald-100{background-color:#0f2a2a!important;border-color:#16443f!important}
+html body [data-qadir-theme="dark"] button:focus-visible,html body [data-qadir-theme="dark"] a:focus-visible,html body [data-qadir-theme="dark"] input:focus-visible{outline:3px solid #6ee7b7;outline-offset:3px}
+html body [data-qadir-theme="light"] button:focus-visible,html body [data-qadir-theme="light"] a:focus-visible,html body [data-qadir-theme="light"] input:focus-visible{outline:3px solid #087f5b;outline-offset:3px}
+
+/* Shared visual rhythm for the rebuilt student experience. */
+html body [data-qadir-theme]{scroll-behavior:smooth}
+html body [data-qadir-theme] a,html body [data-qadir-theme] button{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,border-color .18s ease}
+html body [data-qadir-theme] button:hover:not(:disabled),html body [data-qadir-theme] a:hover{transform:translateY(-1px)}
+html body [data-qadir-theme] input,html body [data-qadir-theme] textarea,html body [data-qadir-theme] select{border-radius:14px}
+html body [data-qadir-theme] ::selection{background:#b9f2d7;color:#073b29}
+@media(max-width:640px){html body [data-qadir-theme]{padding-inline:10px!important}html body [data-qadir-theme] h1{letter-spacing:-.03em}html body [data-qadir-theme] button{min-height:44px}}
+@media(prefers-reduced-motion:reduce){html body [data-qadir-theme],html body [data-qadir-theme] *,html body [data-qadir-theme] *::before,html body [data-qadir-theme] *::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}html body [data-qadir-theme] button:hover:not(:disabled),html body [data-qadir-theme] a:hover{transform:none}}

@@ -1,0 +1,40 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "قادر — منصة التعلم"
+    },
+    {
+      "path": "/admin",
+      "title": "دخول النظام الإداري — قادر"
+    },
+    {
+      "path": "/admin.html",
+      "title": "النظام الإداري — قادر"
+    },
+    {
+      "path": "/admin-admins.html",
+      "title": "دليل الإداريين — قادر"
+    },
+    {
+      "path": "/chat.html",
+      "title": "مساعد قادر — القدرات والتحصيلي"
+    },
+    {
+      "path": "/content/:slug",
+      "title": "مادة تعليمية — قادر"
+    },
+    {
+      "path": "/library.html",
+      "title": "مكتبة قادر التعليمية"
+    },
+    {
+      "path": "/contact.html",
+      "title": "تواصل مع قادر"
+    },
+    {
+      "path": "/notes.html",
+      "title": "ملاحظاتي — قادر"
+    }
+  ]
+}

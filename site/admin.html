@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f6">
+  <title>النظام الإداري — قادر</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/admin-page.css">
+  <link rel="stylesheet" href="/admin-console.css">
+  <link rel="stylesheet" href="/admin-attachments.css">
+  <script src="/admin-page.js?v=1e78028" defer></script>
+  <script src="/admin-console.js?v=trash-1" defer></script>
+</head>
+<body>
+  <section id="gate" class="panel gate" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true" style="margin:0 auto 12px"></div>
+    <p>جارٍ التحقق من صلاحية الدخول…</p>
+  </section>
+
+  <div id="admin-content" class="admin-frame" hidden>
+    <div id="drawer-scrim" class="drawer-scrim" hidden></div>
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="التنقل الإداري">
+      <a class="admin-brand" href="/" aria-label="قادر">
+        <span class="brand-mark" aria-hidden="true">ق</span>
+        <span><strong>قادر</strong><small>النظام الإداري</small></span>
+      </a>
+      <div class="sidebar-caption">إدارة المنصة</div>
+      <nav id="admin-nav" class="admin-nav" aria-label="أقسام الإدارة">
+        <button class="nav-item active" type="button" data-section="dashboard" data-permission="dashboard.view">الرئيسية</button>
+        <button class="nav-item" type="button" data-section="content" data-permission="content.view">المحتوى التعليمي</button>
+        <button class="nav-item" type="button" data-section="site-lessons" data-permission="content.manage">دروس الموقع</button>
+        <button class="nav-item" type="button" data-section="users" data-permission="users.view">المستخدمون والرتب</button>
+        <button class="nav-item" type="button" data-section="statistics" data-permission="dashboard.view">الإحصاءات</button>
+        <button class="nav-item" type="button" data-section="messages" data-permission="messages.view">الرسائل <span id="message-badge" class="nav-badge" hidden></span></button>
+        <button class="nav-item" type="button" data-section="attachments" data-permission="messages.view">مكتبة المرفقات</button>
+        <button class="nav-item" type="button" data-section="internal-messages" data-permission="messages.view">التواصل الإداري</button>
+        <button class="nav-item" type="button" data-section="files" data-permission="media.view">الملفات</button>
+        <button class="nav-item" type="button" data-section="navigation" data-permission="settings.view">القوائم والروابط</button>
+        <button class="nav-item" type="button" data-section="settings" data-permission="settings.view">الإعدادات</button>
+        <button class="nav-item" type="button" data-section="security" data-permission="security.manage">الأمان والجلسات</button>
+        <button class="nav-item" type="button" data-section="activity" data-permission="audit.view">سجل النشاط</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div id="admin-identity" class="admin-identity">حساب إداري</div>
+        <button id="admin-logout" class="button logout-button" type="button">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <div class="admin-workspace">
+      <header class="workspace-header">
+        <button id="mobile-nav-toggle" class="icon-button mobile-only" type="button" aria-label="فتح القائمة" aria-expanded="false">☰</button>
+        <label class="global-search-wrap"><span class="sr-only">بحث شامل</span><span aria-hidden="true">⌕</span><input id="global-search" type="search" placeholder="بحث في القسم الحالي…" autocomplete="off"></label>
+        <div class="workspace-actions">
+          <span id="workspace-user" class="workspace-user"></span>
+          <button class="button" id="theme-toggle" type="button" aria-label="تبديل السمة">الوضع الداكن</button>
+        </div>
+      </header>
+
+      <main class="admin-main">
+        <section data-admin-section="dashboard" class="admin-section" aria-labelledby="dashboard-title">
+          <div class="section-heading"><div><div class="eyebrow">قادر · إدارة التعلم</div><h1 id="dashboard-title">لوحة المعلومات</h1><p>نظرة موجزة على الطلاب والنشاط التعليمي.</p></div><a class="button" href="/" target="_blank" rel="noopener">فتح الموقع</a></div>
+          <div id="dashboard-stats" class="stats-grid" aria-live="polite"></div>
+          <div class="charts-grid">
+            <section class="panel chart-panel"><h2>الزيارات خلال 14 يومًا</h2><div id="dashboard-visits" class="chart-bars"></div></section>
+            <section class="panel chart-panel"><h2>التسجيلات خلال 14 يومًا</h2><div id="dashboard-registrations" class="chart-bars"></div></section>
+          </div>
+          <div class="panel dashboard-note"><strong>حالة المنصة</strong><span id="dashboard-status">جارٍ تحميل البيانات…</span></div>
+        </section>
+
+        <section id="section-content" data-admin-section="content" class="admin-section" hidden aria-labelledby="content-title">
+          <div class="section-heading"><div><div class="eyebrow">الدروس والموارد</div><h1 id="content-title">المحتوى التعليمي</h1><p>إدارة مواد قادر دون تغيير بنك الأسئلة الحالي تلقائيًا.</p></div><div class="content-tools"><button id="content-export-csv" class="button" type="button" hidden>تصدير CSV / Excel</button><label id="content-import-label" class="button" for="content-import-file" hidden>استيراد CSV</label><input id="content-import-file" class="sr-only" type="file" accept=".csv,text/csv"><button id="content-print-pdf" class="button" type="button" hidden>طباعة / PDF</button><button id="content-new" class="button primary" type="button">محتوى جديد</button></div></div>
+          <div class="panel filter-bar"><input id="content-search" type="search" placeholder="ابحث بالعنوان أو الرابط"><select id="content-kind"><option value="">كل الأنواع</option><option value="lesson">درس</option><option value="resource">مورد</option><option value="question">سؤال</option><option value="announcement">إعلان</option><option value="faq">سؤال شائع</option></select><select id="content-status"><option value="">كل الحالات</option><option value="draft">مسودة</option><option value="published">منشور</option><option value="archived">مؤرشف</option></select><label class="check-label"><input id="content-trash-toggle" type="checkbox"> سلة المحذوفات</label><button id="content-search-button" class="button" type="button">بحث</button></div>
+          <div class="panel bulk-bar"><label><input id="content-select-all" type="checkbox"> تحديد الكل</label><select id="content-bulk-action"><option value="">إجراء جماعي…</option><option value="publish">نشر</option><option value="archive">أرشفة</option><option value="trash">نقل للسلة</option></select><button id="content-bulk-apply" class="button" type="button">تطبيق</button><span id="content-total" class="muted"></span></div>
+          <div id="content-list" class="card-list" aria-live="polite"></div>
+          <nav class="pagination"><button id="content-prev" class="button" type="button">السابق</button><span id="content-pages" class="page-label"></span><button id="content-next" class="button" type="button">التالي</button></nav>
+          <section id="content-editor" class="panel editor-panel" hidden aria-labelledby="editor-title">
+            <div class="section-heading"><div><h2 id="editor-title">محتوى جديد</h2><p>الحقول العربية مطلوبة. يمكنك معاينة المحتوى قبل حفظه.</p></div><button id="content-close" class="button" type="button">إغلاق</button></div>
+            <form id="content-form" class="form-grid">
+              <input id="content-id" type="hidden">
+              <input id="content-slug" type="hidden">
+              <input id="content-category" type="hidden">
+              <input id="content-title-en" type="hidden">
+              <input id="content-tags" type="hidden">
+              <input id="content-body-en" type="hidden">
+              <input id="content-seo-ar" type="hidden"><input id="content-seo-en" type="hidden">
+              <input id="content-seo-description-ar" type="hidden"><input id="content-seo-description-en" type="hidden">
+              <label class="field-wrap full">العنوان<input id="content-title-ar" maxlength="200" required placeholder="مثال: النسبة والتناسب"></label>
+              <label class="field-wrap">النوع<select id="content-kind-edit"><option value="lesson">درس</option><option value="resource">مورد</option><option value="question">سؤال</option><option value="announcement">إعلان</option><option value="faq">سؤال شائع</option></select></label>
+              <label class="field-wrap">المادة / التصنيف<select id="content-category-select"><option value="">غير محدد</option><option value="قدرات عام">قدرات عام</option><option value="قدرات كمي">قدرات كمي</option><option value="قدرات لفظي">قدرات لفظي</option><option value="تحصيلي عام">تحصيلي عام</option><option value="رياضيات">رياضيات</option><option value="فيزياء">فيزياء</option><option value="كيمياء">كيمياء</option><option value="أحياء">أحياء</option><option value="علوم">علوم</option><option value="لغة إنجليزية">لغة إنجليزية</option><option value="مهارات الدراسة">مهارات الدراسة</option><option value="بنك أسئلة">بنك أسئلة</option><option value="أخرى">أخرى</option></select></label>
+              <label class="field-wrap">الحالة<select id="content-state"><option value="draft">مسودة</option><option value="published">منشور</option><option value="archived">مؤرشف</option></select></label>
+              <label class="field-wrap full">النص العربي<textarea id="content-body-ar" rows="9" maxlength="30000" required placeholder="اكتب المحتوى التعليمي هنا…"></textarea></label>
+              <label class="field-wrap">موعد النشر (اختياري)<input id="content-publish-at" type="datetime-local"></label>
+              <label class="field-wrap">صورة الغلاف (اختياري)<input id="content-cover" maxlength="512" dir="ltr" placeholder="/manus-storage/…"></label>
+              <div class="form-actions full"><button id="content-preview" class="button" type="button">معاينة</button><button class="button primary" type="submit">حفظ المحتوى</button></div>
+            </form>
+          </section>
+        </section>
+
+        <section id="section-site-lessons" data-admin-section="site-lessons" class="admin-section" hidden aria-labelledby="site-lessons-title">
+          <div class="section-heading"><div><div class="eyebrow">إضافة وتحرير بالذكاء الاصطناعي</div><h1 id="site-lessons-title">دروس الموقع</h1><p>ارفع ملف PDF أو ملفًا نصيًا، حدّد نوعه، وسيستخرج قادر الدروس أو الأسئلة والأجوبة ويضيفها للموقع.</p></div></div>
+          <section class="panel form-grid site-lessons-uploader">
+            <label class="field-wrap full">الملف التعليمي<input id="site-lessons-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,image/*" required><small>يدعم PDF وWord وPowerPoint وExcel والصور والملفات النصية. سيُحفظ الملف في مساحة دروس الموقع.</small></label>
+            <label class="field-wrap">ماذا يوجد في الملف؟<select id="site-lessons-mode"><option value="lesson">درس أو شرح</option><option value="questions">أسئلة وأجوبة</option></select></label>
+            <label class="check-label"><input id="site-lessons-publish" type="checkbox" checked disabled> بعد اعتماد المعاينة يُنشر الناتج مباشرة في الدروس وبنوك الأسئلة</label>
+            <div class="form-actions full"><button id="site-lessons-run" class="button primary" type="button">رفع وتحليل بالـAI</button><span id="site-lessons-status" class="muted" role="status"></span></div>
+          </section>
+          <section id="site-lessons-preview" class="panel" hidden aria-labelledby="site-lessons-preview-title"><div class="list-head"><div><h2 id="site-lessons-preview-title">معاينة الناتج قبل الحفظ</h2><span id="site-lessons-preview-note" class="list-note"></span></div><div class="data-card-actions"><button id="site-lessons-commit" class="button primary" type="button">حفظ المعاينة</button><button id="site-lessons-cancel" class="button" type="button">إلغاء</button></div></div><div id="site-lessons-preview-list" class="card-list" aria-live="polite"></div></section>
+          <section class="panel"><div class="list-head"><div><h2>محتوى دروس الموقع</h2><span class="list-note">عدّل أي درس أو سؤال من هنا، مع الاحتفاظ بإصداراته السابقة.</span></div><div class="data-card-actions"><button id="site-lessons-publish-drafts" class="button primary" type="button">نشر المسودات الحالية</button><button id="site-lessons-refresh" class="button" type="button">تحديث</button></div></div><div id="site-lessons-list" class="card-list" aria-live="polite"></div></section>
+        </section>
+        <section id="section-users" data-admin-section="users" class="admin-section" hidden aria-labelledby="users-title">
+          <div class="section-heading"><div><div class="eyebrow">الطلاب والصلاحيات</div><h1 id="users-title">المستخدمون والرتب</h1><p>اضغط «ترقية إلى» بجوار اسم الحساب لعرض الرتب المسموحة. الحالة والرتبة يحميهما الخادم وفق صلاحيتك.</p></div></div>
+          <section class="panel toolbar" aria-label="البحث في الحسابات"><div class="field-wrap"><label for="account-search">البحث باسم المستخدم</label><div class="search-wrap"><span class="icon" aria-hidden="true">⌕</span><input class="search" id="account-search" type="search" dir="ltr" autocomplete="off" maxlength="24" placeholder="اكتب اسم المستخدم…" aria-describedby="search-hint"></div><span id="search-hint" class="list-note">يعرض البحث الحسابات المطابقة أثناء الكتابة.</span></div><div id="result-summary" class="summary" aria-live="polite">جارٍ تحميل الحسابات…</div></section>
+          <div class="list-head"><h2>الحسابات</h2><span id="list-status" class="list-note"></span></div>
+          <section id="user-list" class="user-list" role="list" aria-live="polite" aria-busy="false"></section>
+          <nav class="pagination" aria-label="صفحات الحسابات"><button class="button" id="previous-page" type="button">السابق</button><span class="page-label" id="page-label"></span><button class="button" id="next-page" type="button">التالي</button></nav>
+          <section id="role-manager" class="role-manager" hidden aria-labelledby="roles-heading"><div class="list-head role-section-head"><div><h2 id="roles-heading">الرتب والصلاحيات</h2><span class="list-note">تخصيص الرتب متاح لمالك النظام فقط. التغييرات تطبق على الحسابات المرتبطة بالرتبة.</span></div></div><section class="panel role-create-panel" aria-label="إنشاء رتبة إدارية"><h3>إنشاء رتبة إدارية</h3><form id="create-role-form" class="role-form"><div class="role-basic-fields"><label class="field-wrap"><span>اسم الرتبة</span><input id="new-role-label" class="search role-input" type="text" maxlength="40" minlength="2" required placeholder="مثال: قائد فريق"></label><label class="field-wrap"><span>مستوى الرتبة من 1 إلى 99</span><input id="new-role-priority" class="search role-input" type="number" min="1" max="99" step="1" required value="40"></label></div><div class="permission-grid" data-permissions="create"></div><p class="list-note">البحث وإسناد الرتب يتطلبان إذن عرض الحسابات؛ يُفعّل هذا الإذن تلقائيًا.</p><button class="button primary role-submit" type="submit">إنشاء الرتبة</button></form></section><div id="role-list" class="role-list" aria-live="polite" aria-busy="false"></div></section>
+        </section>
+
+        <section data-admin-section="statistics" class="admin-section" hidden aria-labelledby="statistics-title"><div class="section-heading"><div><div class="eyebrow">استخدام فعلي</div><h1 id="statistics-title">الإحصاءات</h1><p>البيانات المسجلة في قادر فقط، دون تقديرات افتراضية.</p></div></div><div id="statistics-summary" class="stats-grid"></div><div class="charts-grid"><section class="panel chart-panel"><h2>الزيارات</h2><div id="statistics-visits" class="chart-bars"></div></section><section class="panel chart-panel"><h2>تسجيلات الطلاب</h2><div id="statistics-registrations" class="chart-bars"></div></section></div></section>
+
+        <section data-admin-section="internal-messages" class="admin-section" hidden aria-labelledby="internal-messages-title"><div class="section-heading"><div><div class="eyebrow">بين فريق قادر</div><h1 id="internal-messages-title">التواصل الإداري</h1><p>اختر اسم الإداري من القائمة وأرسل له رسالة مباشرة داخل النظام.</p></div></div><section class="panel internal-recipient-panel"><div class="list-head"><div><h2>الإداريون المتاحون</h2><span class="list-note">تظهر هنا جميع الحسابات الإدارية، مع توضيح حالة كل حساب.</span></div><button id="internal-recipients-refresh" class="button" type="button">تحديث الأسماء</button></div><div id="internal-recipient-list" class="recipient-list" aria-live="polite"></div></section><section class="panel internal-chat-panel"><div class="list-head"><div><h2>المحادثات الإدارية</h2><span class="list-note">تظهر هنا الرسائل المرسلة والمستلمة بتنسيق محادثة.</span></div><button id="internal-messages-refresh" class="button" type="button">تحديث المحادثات</button></div><div id="internal-messages-list" class="internal-chat" aria-live="polite"><div class="empty-state">جارٍ تحميل المحادثات…</div></div></section><form id="internal-message-form" class="panel form-grid"><div class="full form-heading-row"><h2>إرسال رسالة إدارية</h2><a class="button" href="/admin-admins.html">فتح دليل الإداريين</a></div><label class="field-wrap">اسم الإداري المستلم<input id="internal-message-recipient" list="internal-admin-names" maxlength="24" pattern="[a-z0-9_]{3,24}" autocomplete="off" required placeholder="اكتب اسم المستخدم مثل ak9"><datalist id="internal-admin-names"></datalist></label><label class="field-wrap">الموضوع<input id="internal-message-subject" maxlength="180" required></label><label class="field-wrap full">الرسالة<textarea id="internal-message-body" maxlength="6000" rows="5"></textarea></label><label class="field-wrap full">مرفقات (اختياري)<input id="internal-message-files" type="file" accept="*/*" multiple><div id="internal-message-dropzone" class="attachment-dropzone" tabindex="0">اسحب الملفات هنا أو اضغط لاختيارها</div><small>يمكنك إرفاق 3 ملفات كحد أقصى بأي امتداد أو تنسيق، دون حد حجم يفرضه الموقع.</small><div id="internal-message-file-list" class="attachment-list"></div></label><div class="form-actions full"><button class="button primary" type="submit">إرسال الرسالة</button></div></form></section>
+        <section data-admin-section="messages" class="admin-section" hidden aria-labelledby="messages-title"><div class="section-heading"><div><div class="eyebrow">صندوق الوارد</div><h1 id="messages-title">الرسائل</h1><p>الردود تحفظ في قادر ليطلع عليها صاحب الرسالة؛ لا ترسل بريدًا خارجيًا دون مزود مضبوط.</p></div></div><div class="panel filter-bar"><input id="messages-search" type="search" placeholder="ابحث بالاسم أو الموضوع"><select id="messages-type"><option value="">كل أنواع الرسائل</option><option value="student">رسائل الطلاب</option><option value="admin">تواصل إداري</option></select><select id="messages-status"><option value="">كل الحالات</option><option value="new">جديدة</option><option value="open">مفتوحة</option><option value="replied">تم الرد</option><option value="closed">مغلقة</option></select><select id="messages-read"><option value="">مقروء وغير مقروء</option><option value="unread">غير مقروءة</option><option value="read">مقروءة</option></select><label class="check-label"><input id="messages-trash-toggle" type="checkbox"> سلة المحذوفات</label><button id="messages-refresh" class="button" type="button">تحديث</button></div><div id="messages-list" class="card-list" aria-live="polite"></div><div id="messages-pagination" class="page-label"></div></section>
+
+        <section data-admin-section="attachments" class="admin-section" hidden aria-labelledby="attachments-title"><div class="section-heading"><div><div class="eyebrow">مركز الملفات</div><h1 id="attachments-title">مكتبة المرفقات</h1><p>استعرض مرفقات الرسائل الإدارية والطلابية مع روابط محمية مرتبطة برسائلها.</p></div><button id="attachments-refresh" class="button" type="button">تحديث المكتبة</button></div><div id="attachments-stats" class="stats-grid attachment-stats"></div><div class="panel filter-bar attachment-toolbar"><input id="attachments-search" type="search" placeholder="ابحث باسم الملف أو موضوع الرسالة"><select id="attachments-type"><option value="">كل الأنواع</option><option value="image">صور</option><option value="pdf">PDF</option><option value="other">تنسيقات أخرى</option></select><span id="attachments-total" class="muted"></span></div><div id="attachments-list" class="attachment-library" aria-live="polite"></div><nav class="pagination"><button id="attachments-prev" class="button" type="button">السابق</button><span id="attachments-pagination" class="page-label"></span><button id="attachments-next" class="button" type="button">التالي</button></nav></section>
+        <section data-admin-section="files" class="admin-section" hidden aria-labelledby="files-title"><div class="section-heading"><div><div class="eyebrow">تخزين دائم</div><h1 id="files-title">مدير الملفات</h1><p>الملفات تحفظ في Manus Storage؛ سلة الملفات تخفي سجلها دون حذف البايتات من التخزين.</p></div></div><div class="panel file-toolbar"><label class="button primary" for="file-input">رفع ملف</label><input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,text/plain" multiple><input id="files-search" type="search" placeholder="ابحث باسم الملف"><label class="check-label"><input id="files-trash-toggle" type="checkbox"> سلة الملفات</label><button id="files-refresh" class="button" type="button">تحديث</button></div><div id="files-list" class="media-grid" aria-live="polite"></div></section>
+
+        <section data-admin-section="navigation" class="admin-section" hidden aria-labelledby="navigation-title"><div class="section-heading"><div><div class="eyebrow">روابط الموقع</div><h1 id="navigation-title">القوائم والتنقل</h1><p>إدارة روابط الزوار وإظهارها أو إخفاؤها.</p></div></div><form id="navigation-form" class="panel form-grid"><input id="navigation-id" type="hidden"><label class="field-wrap">الاسم بالعربية<input id="navigation-label-ar" maxlength="100" required></label><label class="field-wrap">English label<input id="navigation-label-en" maxlength="100" dir="ltr"></label><label class="field-wrap">الرابط<input id="navigation-href" maxlength="512" required dir="ltr" placeholder="/library.html"></label><label class="field-wrap">الترتيب<input id="navigation-position" type="number" min="0" max="10000" value="0"></label><label class="check-label"><input id="navigation-active" type="checkbox" checked> ظاهر للزوار</label><div class="form-actions full"><button class="button primary" type="submit">حفظ الرابط</button><button id="navigation-reset" class="button" type="button">رابط جديد</button></div></form><div class="panel filter-bar"><label class="check-label"><input id="navigation-trash-toggle" type="checkbox"> سلة الروابط</label></div><div id="navigation-list" class="card-list"></div></section>
+
+        <section data-admin-section="settings" class="admin-section" hidden aria-labelledby="settings-title"><div class="section-heading"><div><div class="eyebrow">هوية قادر</div><h1 id="settings-title">الإعدادات العامة</h1><p>لا توجد أسعار أو إعدادات دفع؛ قادر منصة تعليمية مجانية.</p></div></div><form id="settings-form" class="panel form-grid"><label class="field-wrap">اسم الموقع<input id="setting-site-name" maxlength="80"></label><label class="field-wrap">البريد للتواصل<input id="setting-contact-email" type="email" maxlength="254" dir="ltr"></label><label class="field-wrap full">رابط الشعار من مدير الملفات<input id="setting-logo-url" maxlength="512" dir="ltr"></label><label class="field-wrap full">وصف SEO<input id="setting-seo-description" maxlength="320"></label><label class="field-wrap">رابط X<input id="social-x" maxlength="300" dir="ltr"></label><label class="field-wrap">رابط Instagram<input id="social-instagram" maxlength="300" dir="ltr"></label><label class="field-wrap">رابط YouTube<input id="social-youtube" maxlength="300" dir="ltr"></label><label class="check-label"><input id="setting-maintenance" type="checkbox"> وضع الصيانة</label><label class="field-wrap full">رسالة الصيانة<textarea id="setting-maintenance-message" maxlength="300" rows="3"></textarea></label><label class="field-wrap full">قوالب إشعارات محفوظة (JSON)<textarea id="setting-notification-templates" maxlength="10000" rows="5" dir="ltr" placeholder="{}"></textarea></label><div class="form-actions full"><button class="button primary" type="submit">حفظ الإعدادات</button><button id="backup-download" class="button" type="button">تنزيل نسخة بيانات آمنة</button><button id="export-csv" class="button" type="button">تصدير المستخدمين CSV</button></div></form></section>
+
+        <section data-admin-section="security" class="admin-section" hidden aria-labelledby="security-title"><div class="section-heading"><div><div class="eyebrow">حماية الحسابات</div><h1 id="security-title">الأمان والجلسات</h1><p>اعرض الجلسات النشطة لهذا الحساب وأنهِ جلسة لم تعد تستخدمها.</p></div><button id="sessions-refresh" class="button" type="button">تحديث الجلسات</button></div><div id="sessions-list" class="card-list"></div><div class="panel security-note"><strong>حدود الحماية</strong><p>محاولات الدخول محدودة، والجلسات تنتهي بعد الخمول. تقييد IP غير مفعّل لأن عنوان الاتصال خلف الوكيل لا يُعد موثوقًا دون مصدر موثق.</p></div></section>
+
+        <section data-admin-section="activity" class="admin-section" hidden aria-labelledby="activity-title"><div class="section-heading"><div><div class="eyebrow">أثر التعديلات</div><h1 id="activity-title">سجل النشاط</h1><p>من قام بالفعل وما العنصر الذي تأثر ومتى.</p></div></div><div class="panel filter-bar"><input id="activity-search" type="search" placeholder="ابحث باسم المدير أو نوع العملية"><button id="activity-refresh" class="button" type="button">تحديث</button></div><div id="activity-list" class="card-list"></div></section>
+      </main>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

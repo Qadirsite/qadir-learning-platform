@@ -1,0 +1,33 @@
+#role-manager[hidden]{display:none!important}
+.role-manager{margin-top:30px}
+.role-section-head{margin:0 2px 12px}
+.role-section-head h2{margin-bottom:2px}
+.role-create-panel{padding:18px;margin-bottom:14px}
+.role-create-panel h3{margin:0 0 12px;font-size:16px}
+.role-form{display:grid;gap:14px}
+.role-basic-fields{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:12px;align-items:end}
+.role-input{direction:rtl;text-align:right}
+#new-role-priority,.role-priority-input{direction:ltr;text-align:left}
+.permission-grid{display:flex;flex-wrap:wrap;gap:8px}
+.permission-option{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:7px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:var(--text);font-size:12px;font-weight:800;cursor:pointer}
+.permission-option input{width:17px;height:17px;accent-color:var(--green)}
+.permission-option input:disabled{opacity:.6}
+.role-submit{justify-self:start;min-width:135px}
+.role-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.role-card{padding:16px;min-width:0}
+.role-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px}
+.role-card-title{font-size:15px;font-weight:950;overflow-wrap:anywhere}
+.role-card-note{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.6}
+.role-card-badge{flex:none}
+.role-editor{display:grid;gap:12px}
+.role-editor-fields{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:10px}
+.role-editor-fields .field-wrap{min-width:0}
+.role-editor-fields input{min-width:0}
+.role-card-actions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.role-card-actions .button{min-height:38px;padding:7px 11px;font-size:12px}
+.role-protected-note{padding:10px;border-radius:12px;background:var(--surface-2);color:var(--muted);font-size:12px;font-weight:750;line-height:1.7}
+.user-name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.user-role-select{width:auto;max-width:100%;min-height:32px;padding:4px 9px;border:1px solid var(--green);border-radius:10px;background:var(--green-soft);color:var(--green);font:inherit;font-size:12px;font-weight:850;cursor:pointer}
+.user-role-select:focus-visible,.role-input:focus-visible{outline:3px solid #32c995;outline-offset:2px}
+.user-role-select:disabled{opacity:.65;cursor:wait}
+@media(max-width:640px){.role-manager{margin-top:24px}.role-create-panel{padding:14px}.role-basic-fields{grid-template-columns:1fr}.role-list{grid-template-columns:1fr}.role-card{padding:14px}.role-editor-fields{grid-template-columns:minmax(0,1fr) 94px}.user-role-select{max-width:100%}.role-section-head{align-items:flex-start}}

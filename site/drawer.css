@@ -1,0 +1,26 @@
+.qadir-drawer-backdrop{position:fixed;inset:0;z-index:120;background:rgba(4,10,8,.52);backdrop-filter:blur(3px);animation:qadir-backdrop-in .18s ease-out}
+.qadir-search-drawer{position:absolute;inset-block:0;left:0;display:flex;flex-direction:column;gap:14px;width:min(420px,92vw);max-width:100%;height:100dvh;overflow:hidden;padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));background:#fff;color:#17231e;border-right:1px solid #d8e4dd;box-shadow:18px 0 48px rgba(0,0,0,.24);direction:rtl;animation:qadir-drawer-in-left .24s cubic-bezier(.2,.75,.25,1) both}
+.qadir-search-drawer.qadir-dark{background:#0f172a;color:#f1f5f9;border-color:#334155}
+.qadir-drawer-top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px}
+.qadir-drawer-top h2{font-size:18px;font-weight:950;margin:0}
+.qadir-drawer-close{display:grid;place-items:center;width:42px;height:42px;border:1px solid #d6e2da;border-radius:50%;background:#f5faf7;color:#20352b;font-size:24px;font-weight:800;cursor:pointer}
+.qadir-dark .qadir-drawer-close{border-color:#334155;background:#1e293b;color:#f8fafc}
+.qadir-drawer-close:focus-visible,.qadir-drawer-result:focus-visible,.qadir-drawer-chat-link:focus-visible{outline:3px solid #34d399;outline-offset:3px}
+.qadir-drawer-search{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border:1px solid #d7e3dc;border-radius:16px;background:#f8fbf9;color:#62756b}
+.qadir-dark .qadir-drawer-search{border-color:#334155;background:#1e293b;color:#cbd5e1}
+.qadir-drawer-input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:inherit;font-size:14px;font-weight:750}
+.qadir-drawer-input::placeholder{color:#7b8e83}
+.qadir-dark .qadir-drawer-input::placeholder{color:#94a3b8}
+.qadir-drawer-chat-link{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;border:1px solid #a9e2c5;border-radius:16px;background:#ecfdf5;color:#065f46;font-size:13px;font-weight:950;text-decoration:none}
+.qadir-dark .qadir-drawer-chat-link{border-color:#166746;background:#123b2b;color:#a7f3d0}
+.qadir-drawer-chat-link:hover{filter:brightness(.97)}
+.qadir-drawer-results{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;overflow-y:auto;padding:2px 2px 6px;overscroll-behavior:contain}
+.qadir-drawer-result{width:100%;min-height:46px;padding:10px 13px;border:1px solid #e0e8e3;border-radius:13px;background:#f8faf9;color:#24342c;text-align:right;font-size:13px;font-weight:850;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.qadir-drawer-result:hover{transform:translateX(-2px);border-color:#54b88b;background:#effaf3}
+.qadir-drawer-result.active{border-color:#1f2937;background:#0f172a;color:#fff}
+.qadir-drawer-result.dark{border-color:#334155;background:#1e293b;color:#e2e8f0}
+.qadir-drawer-result.dark.active{border-color:#a7f3d0;background:#064e3b;color:#fff}
+@keyframes qadir-drawer-in-left{from{transform:translateX(-100%);opacity:.85}to{transform:translateX(0);opacity:1}}
+@keyframes qadir-backdrop-in{from{opacity:0}to{opacity:1}}
+[data-qadir-reduce-motion="true"] .qadir-search-drawer,[data-qadir-reduce-motion="true"] .qadir-drawer-backdrop{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.qadir-search-drawer,.qadir-drawer-backdrop{animation:none;transition:none}}

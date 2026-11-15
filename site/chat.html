@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5fbf8">
+  <title>مساعد قادر | القدرات والتحصيلي</title>
+  <meta name="description" content="محادثة تعليمية عربية للإجابة عن أسئلة القدرات والتحصيلي واستراتيجيات الاستعداد لهما، مع إمكانية إرفاق صورة أو تسجيل صوتي للسؤال.">
+  <link rel="stylesheet" href="/chat-page.css">
+  <script src="/metrics.js?v=voice-2" defer></script>
+  <script src="/chat-page.js?v=voice-2" defer></script>
+</head>
+<body>
+  <header class="chat-header">
+    <a class="back-link" href="/" aria-label="العودة إلى منصة قادر">العودة إلى قادر</a>
+    <div class="brand" aria-label="مساعد قادر التعليمي">
+      <span class="brand-mark" aria-hidden="true">ق</span>
+      <span class="brand-title">مساعد قادر</span>
+      <span class="brand-subtitle">القدرات والتحصيلي فقط</span>
+    </div>
+    <div class="header-actions">
+      <button class="header-button" id="clear-chat" type="button">محادثة جديدة</button>
+      <button class="header-button" id="chat-history" type="button">سجل المحادثات</button>
+      <button class="header-button theme-button" id="theme-toggle" type="button">الوضع الداكن</button>
+    </div>
+  </header>
+
+  <dialog class="history-dialog" id="chat-history-dialog" aria-labelledby="chat-history-title">
+    <div class="history-dialog-card">
+      <div class="history-dialog-head"><div><h2 id="chat-history-title">سجل المحادثات</h2><p>محادثاتك محفوظة على هذا الجهاز فقط.</p></div><button class="dialog-close" id="close-history" type="button" aria-label="إغلاق سجل المحادثات">×</button></div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </dialog>
+  <main class="chat-main">
+    <section class="chat-panel" aria-label="محادثة مساعد قادر">
+      <div class="scope-note"><span class="scope-dot" aria-hidden="true"></span><span>اسأل عن الكمي أو اللفظي أو مواد التحصيلي وخطط الاستعداد. يمكنك إرفاق صورة أو تسجيل سؤال صوتي؛ خارج هذا النطاق سأعتذر بلطف.</span></div>
+      <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="رسائل المحادثة">
+        <article class="message assistant-message" data-welcome="true">
+          <div class="message-label">مساعد قادر</div>
+          <div class="message-text">أهلًا بك. أستطيع شرح أسئلة القدرات والتحصيلي، أو مساعدتك بخطة مذاكرة وحل خطوة بخطوة. ما سؤالك؟</div>
+        </article>
+      </div>
+      <div class="quick-prompts" id="quick-prompts" aria-label="أسئلة مقترحة">
+        <button type="button" class="prompt-chip" data-prompt="اشرح لي طريقة حل النسبة والتناسب في أسئلة القدرات بمثال.">اشرح النسبة والتناسب</button>
+        <button type="button" class="prompt-chip" data-prompt="اقترح لي خطة مذاكرة أسبوعية للتحصيلي في الرياضيات والعلوم.">خطة للتحصيلي</button>
+        <button type="button" class="prompt-chip" data-prompt="كيف أتعامل مع أسئلة إكمال الجمل في القسم اللفظي؟">تدريب لفظي</button>
+      </div>
+      <form class="composer" id="chat-form">
+        <label class="sr-only" for="chat-input">اكتب سؤالك عن القدرات أو التحصيلي</label>
+        <textarea id="chat-input" name="message" rows="2" maxlength="1500" placeholder="اكتب سؤالك أو أرفق صورة أو تسجيل سؤال القدرات/التحصيلي…"></textarea>
+        <div class="attachment-controls">
+          <button class="attach-button" id="attach-image" type="button" aria-label="إرفاق صورة للسؤال">إرفاق صورة</button>
+          <button class="voice-button" id="record-voice" type="button" aria-label="تسجيل سؤال صوتي" aria-pressed="false">تسجيل صوتي</button>
+          <input class="sr-only" id="image-input" type="file" accept="image/jpeg,image/png,image/webp" aria-label="اختر صورة PNG أو JPEG أو WebP">
+          <span class="attachment-limit">صورة أو صوت عربي · التسجيل حتى 60 ثانية و8 ميغابايت</span>
+        </div>
+        <div class="image-preview" id="image-preview" hidden>
+          <img id="image-preview-image" alt="معاينة الصورة المرفقة">
+          <div class="image-preview-info"><span id="image-preview-name"></span><span id="image-preview-size"></span></div>
+          <button class="remove-image" id="remove-image" type="button">إزالة الصورة</button>
+        </div>
+        <div class="composer-footer">
+          <span class="input-hint" id="input-hint">حد الرسالة 1500 حرف. Enter للإرسال وShift+Enter لسطر جديد.</span>
+          <button class="send-button" id="send-button" type="submit" disabled>إرسال</button>
+        </div>
+      </form>
+      <div class="chat-status" id="chat-status" role="status" aria-live="polite"></div>
+      <p class="privacy-note">تُرسل الصورة لمعالجتها مع سؤالك فقط؛ لا تُحفظ في حسابك أو قاعدة بيانات قادر.</p>
+    </section>
+  </main>
+</body>
+</html>
