@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const mysql = require('mysql2/promise');
+const studentLessonCatalog = require('./student-lessons-catalog.json');
 
 let pool;
 const DUMMY_SALT = Buffer.alloc(16, 0x5a);
@@ -96,6 +97,15 @@ function getPool() {
   return pool;
 }
 
+async function seedStudentLessons() {
+  for (const item of studentLessonCatalog) {
+    await getPool().execute(`INSERT INTO student_lessons (lesson_key, section, original_title_ar, title_ar)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE section = VALUES(section), original_title_ar = VALUES(original_title_ar)`,
+    [item.lesson_key, item.section, item.original_title, item.original_title]);
+  }
+}
+
 async function initialize() {
   const connection = await getPool().getConnection();
   const lockName = 'qadir_schema_migrations_v1';
@@ -120,6 +130,7 @@ async function initialize() {
       for (const statement of statements) await connection.query(statement);
       await connection.execute('INSERT INTO schema_migrations (version) VALUES (?)', [version]);
     }
+    await seedStudentLessons();
     const [legacyMessages] = await connection.query('SELECT id,attachments FROM admin_messages WHERE attachments IS NOT NULL');
     for (const row of legacyMessages) {
       let attachments = row.attachments;

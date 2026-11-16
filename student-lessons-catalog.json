@@ -1,0 +1,187 @@
+[
+  {
+    "lesson_key": "k1",
+    "section": "كمي",
+    "original_title": "الأعداد والعمليات"
+  },
+  {
+    "lesson_key": "k2",
+    "section": "كمي",
+    "original_title": "الكسور والأعداد العشرية"
+  },
+  {
+    "lesson_key": "k3",
+    "section": "كمي",
+    "original_title": "النسبة المئوية"
+  },
+  {
+    "lesson_key": "k4",
+    "section": "كمي",
+    "original_title": "النسبة والتناسب"
+  },
+  {
+    "lesson_key": "k5",
+    "section": "كمي",
+    "original_title": "المعادلات الخطية"
+  },
+  {
+    "lesson_key": "k6",
+    "section": "كمي",
+    "original_title": "المتباينات"
+  },
+  {
+    "lesson_key": "k7",
+    "section": "كمي",
+    "original_title": "الأسس والجذور"
+  },
+  {
+    "lesson_key": "k8",
+    "section": "كمي",
+    "original_title": "المتتابعات والأنماط"
+  },
+  {
+    "lesson_key": "k9",
+    "section": "كمي",
+    "original_title": "الزوايا والمستقيمات"
+  },
+  {
+    "lesson_key": "k10",
+    "section": "كمي",
+    "original_title": "المثلثات والتشابه"
+  },
+  {
+    "lesson_key": "k11",
+    "section": "كمي",
+    "original_title": "فيثاغورس وتطبيقاته"
+  },
+  {
+    "lesson_key": "k12",
+    "section": "كمي",
+    "original_title": "الدائرة وخصائصها"
+  },
+  {
+    "lesson_key": "k13",
+    "section": "كمي",
+    "original_title": "المساحات والحجوم"
+  },
+  {
+    "lesson_key": "k14",
+    "section": "كمي",
+    "original_title": "الإحصاء والاحتمالات"
+  },
+  {
+    "lesson_key": "k15",
+    "section": "كمي",
+    "original_title": "المقارنات الكمية"
+  },
+  {
+    "lesson_key": "l1",
+    "section": "لفظي",
+    "original_title": "التناظر اللفظي - 12 علاقة"
+  },
+  {
+    "lesson_key": "l2",
+    "section": "لفظي",
+    "original_title": "إكمال الجمل"
+  },
+  {
+    "lesson_key": "l3",
+    "section": "لفظي",
+    "original_title": "الخطأ السياقي"
+  },
+  {
+    "lesson_key": "l4",
+    "section": "لفظي",
+    "original_title": "المفردة الشاذة"
+  },
+  {
+    "lesson_key": "l5",
+    "section": "لفظي",
+    "original_title": "الارتباط والاختلاف"
+  },
+  {
+    "lesson_key": "l6",
+    "section": "لفظي",
+    "original_title": "استيعاب المقروء 1 - العلمية"
+  },
+  {
+    "lesson_key": "l7",
+    "section": "لفظي",
+    "original_title": "استيعاب المقروء 2 - الأدبية"
+  },
+  {
+    "lesson_key": "l8",
+    "section": "لفظي",
+    "original_title": "استيعاب المقروء 3 - الاجتماعية"
+  },
+  {
+    "lesson_key": "l9",
+    "section": "لفظي",
+    "original_title": "المفردات اللغوية - 100 كلمة ذهبية"
+  },
+  {
+    "lesson_key": "l10",
+    "section": "لفظي",
+    "original_title": "فهم النص وتحليل"
+  },
+  {
+    "lesson_key": "t1",
+    "section": "تحصيلي",
+    "original_title": "رياضيات 1 - التفاضل"
+  },
+  {
+    "lesson_key": "t2",
+    "section": "تحصيلي",
+    "original_title": "رياضيات 2 - التكامل"
+  },
+  {
+    "lesson_key": "t3",
+    "section": "تحصيلي",
+    "original_title": "رياضيات 3 - المصفوفات"
+  },
+  {
+    "lesson_key": "t4",
+    "section": "تحصيلي",
+    "original_title": "رياضيات 4 - الاحتمالات المتقدمة"
+  },
+  {
+    "lesson_key": "t5",
+    "section": "تحصيلي",
+    "original_title": "فيزياء 1 - الميكانيكا"
+  },
+  {
+    "lesson_key": "t6",
+    "section": "تحصيلي",
+    "original_title": "فيزياء 2 - الطاقة والحرارة"
+  },
+  {
+    "lesson_key": "t7",
+    "section": "تحصيلي",
+    "original_title": "فيزياء 3 - الكهرباء والمغناطيس"
+  },
+  {
+    "lesson_key": "t8",
+    "section": "تحصيلي",
+    "original_title": "فيزياء 4 - الموجات والضوء"
+  },
+  {
+    "lesson_key": "t9",
+    "section": "تحصيلي",
+    "original_title": "كيمياء 1 - الأساسيات والجدول"
+  },
+  {
+    "lesson_key": "t10",
+    "section": "تحصيلي",
+    "original_title": "كيمياء 2 - التفاعلات والمحاليل"
+  },
+  {
+    "lesson_key": "t11",
+    "section": "تحصيلي",
+    "original_title": "أحياء 1 - الخلية والوراثة"
+  },
+  {
+    "lesson_key": "t12",
+    "section": "تحصيلي",
+    "original_title": "أحياء 2 - التصنيف والبيئة"
+  }
+]

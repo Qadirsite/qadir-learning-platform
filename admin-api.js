@@ -29,6 +29,16 @@ function cleanText(value, max, { required = false } = {}) {
   if ((required && !result) || Array.from(result).length > max) return null;
   return result;
 }
+function normalizeYoutubeUrl(value) {
+  const raw = cleanText(value, 512);
+  if (!raw) return '';
+  try {
+    const parsed = new URL(raw);
+    if (!['https:','http:'].includes(parsed.protocol)) return null;
+    if (!['youtube.com','www.youtube.com','m.youtube.com','youtu.be','www.youtu.be'].includes(parsed.hostname.toLowerCase())) return null;
+    return parsed.toString();
+  } catch { return null; }
+}
 function safeId(value) {
   const id = Number(value);
   return Number.isSafeInteger(id) && id > 0 ? id : 0;
@@ -250,6 +260,7 @@ async function handle(req,res,url,ctx) {
   try {
     if (path === '/api/site/settings' && method === 'GET') return ctx.json(res,200,await data.publicSettings());
     if (path === '/api/navigation' && method === 'GET') return ctx.json(res,200,{items:(await data.getNavigation()).filter(item=>item.is_active)});
+    if (path === '/api/student-lessons' && method === 'GET') return ctx.json(res,200,{items:await data.listStudentLessons()});
     if (path === '/api/metrics/visit' && method === 'POST') {
       const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
       const page=typeof body.path==='string'?body.path:'';
@@ -311,6 +322,30 @@ async function handle(req,res,url,ctx) {
     if(path==='/api/admin/summary' && method==='GET') {
       const user=await auth(req,res,ctx,'dashboard.view'); if(!user) return true;
       return ctx.json(res,200,await data.dashboardSummary());
+    }
+    if(path==='/api/admin/student-lessons' && method==='GET') {
+      const user=await auth(req,res,ctx,'content.view'); if(!user) return true;
+      return ctx.json(res,200,{items:await data.listStudentLessons()});
+    }
+    const studentLessonRoute=path.match(/^\/api\/admin\/student-lessons\/([klt]\d+)$/);
+    if(studentLessonRoute && method==='PUT') {
+      const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;
+      const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
+      const lessonKey=studentLessonRoute[1]; const current=await data.getStudentLesson(lessonKey);
+      if(!current) return ctx.fail(res,404,'الدرس غير موجود.');
+      let title=cleanText(body.title_ar,200); const description=cleanText(body.description_ar,500); const youtube=normalizeYoutubeUrl(body.youtube_url);
+      if(title===null || description===null || youtube===null) return ctx.fail(res,400,'تحقق من العنوان والوصف ورابط يوتيوب.');
+      if(!title) {
+        try {
+          title=await chatAI.completeChat([
+            {role:'system',content:'أنت محرر عناوين عربي لمنصة تعليمية. أعد عنوان درس واحدًا فقط، واضحًا وقصيرًا، بلا علامات اقتباس أو شرح.'},
+            {role:'user',content:`اكتب عنوانًا مناسبًا لدرس ${current.section}. العنوان الأصلي: ${current.original_title_ar}. الوصف الحالي: ${description || current.description_ar || 'لا يوجد وصف'}`}
+          ],globalThis.fetch,{model:'gpt-5-mini',maxCompletionTokens:80,maxOutputLength:200});
+          title=title.replace(/["“”«»]/g,'').trim().slice(0,200);
+        } catch { title=current.original_title_ar; }
+      }
+      await data.updateStudentLesson(user,lessonKey,{title_ar:title,description_ar:description,youtube_url:youtube});
+      return ctx.json(res,200,{updated:true,item:await data.getStudentLesson(lessonKey),titleGenerated:title===current.original_title_ar && !body.title_ar});
     }
     if(path==='/api/admin/site-lessons/presign'&&method==='POST') {
       const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;

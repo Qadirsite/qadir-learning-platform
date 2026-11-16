@@ -4,7 +4,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@11.25.0 --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --prod --frozen-lockfile
-COPY server.js db.js llm.js admin-api.js admin-db.js ./
+COPY server.js db.js llm.js admin-api.js admin-db.js student-lessons-catalog.json ./
 COPY migrations ./migrations
 COPY site ./site
 ENV NODE_ENV=production

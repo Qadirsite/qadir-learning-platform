@@ -384,6 +384,31 @@ async function publicSettings() {
     seo_description: typeof values.seo_description === 'string' ? values.seo_description : 'منصة قادر التعليمية المجانية للقدرات والتحصيلي.'
   };
 }
+async function listStudentLessons() {
+  const [rows] = await pool().execute(`SELECT id,lesson_key,section,original_title_ar,title_ar,description_ar,youtube_url,updated_at
+    FROM student_lessons ORDER BY FIELD(section,'كمي','لفظي','تحصيلي'), lesson_key`);
+  return rows.map(row => ({ ...row, id: Number(row.id), youtube_url: row.youtube_url || '' }));
+}
+async function getStudentLesson(lessonKey) {
+  const [rows] = await pool().execute(`SELECT id,lesson_key,section,original_title_ar,title_ar,description_ar,youtube_url,updated_at
+    FROM student_lessons WHERE lesson_key=? LIMIT 1`, [lessonKey]);
+  return rows[0] ? { ...rows[0], id: Number(rows[0].id), youtube_url: rows[0].youtube_url || '' } : null;
+}
+async function updateStudentLesson(actor, lessonKey, input) {
+  const connection = await pool().getConnection();
+  try {
+    await connection.beginTransaction();
+    const [rows] = await connection.execute('SELECT id FROM student_lessons WHERE lesson_key=? FOR UPDATE', [lessonKey]);
+    if (!rows.length) { await connection.rollback(); return false; }
+    await connection.execute('UPDATE student_lessons SET title_ar=?,description_ar=?,youtube_url=?,updated_by=? WHERE lesson_key=?',
+      [input.title_ar, input.description_ar, input.youtube_url || null, actor.id, lessonKey]);
+    await connection.execute('INSERT INTO admin_activity (actor_user_id,actor_username,action,target_type,target_id,details) VALUES (?,?,?,?,?,?)',
+      [actor.id, actor.username, 'student_lesson.update', 'student_lesson', lessonKey, JSON.stringify({ title_ar: input.title_ar, has_youtube: Boolean(input.youtube_url) })]);
+    await connection.commit();
+    return true;
+  } catch (error) { await connection.rollback(); throw error; }
+  finally { connection.release(); }
+}
 async function backup() {
   const connection = pool();
   const [users] = await connection.query('SELECT id,username,role,is_active,created_at,last_active_at,total_active_seconds FROM users ORDER BY id');
@@ -397,7 +422,8 @@ async function backup() {
   const [activity] = await connection.query('SELECT id,actor_user_id,actor_username,action,target_type,target_id,details,created_at FROM admin_activity ORDER BY id');
   const [messageAttachments] = await connection.query('SELECT id,message_id,original_name,object_key,content_type,size_bytes,created_at FROM admin_message_attachments ORDER BY id');
   const [dailyVisits] = await connection.query('SELECT visit_date,path,views FROM admin_daily_visits ORDER BY visit_date,path');
-  return { format:'qadir-admin-backup', version:1, created_at:new Date().toISOString(), users, roles:roles.map(row=>({...row,permissions:parseJson(row.permissions,[])})), content:content.map(rowContent), contentVersions:contentVersions.map(row=>({...row,snapshot:parseJson(row.snapshot,{})})), messages, media, settings:settings.map(row=>({...row,setting_value:parseJson(row.setting_value,null)})), navigation, activity:activity.map(row=>({...row,details:parseJson(row.details,null)})), dailyVisits };
+  const [studentLessons] = await connection.query('SELECT id,lesson_key,section,original_title_ar,title_ar,description_ar,youtube_url,updated_by,created_at,updated_at FROM student_lessons ORDER BY id');
+  return { format:'qadir-admin-backup', version:1, created_at:new Date().toISOString(), users, roles:roles.map(row=>({...row,permissions:parseJson(row.permissions,[])})), content:content.map(rowContent), contentVersions:contentVersions.map(row=>({...row,snapshot:parseJson(row.snapshot,{})})), messages, media, settings:settings.map(row=>({...row,setting_value:parseJson(row.setting_value,null)})), navigation, activity:activity.map(row=>({...row,details:parseJson(row.details,null)})), dailyVisits, studentLessons };
 }
 
 module.exports = {
@@ -405,5 +431,5 @@ module.exports = {
   createContent, importContent, updateContent, setContentTrash, permanentlyDeleteContent, bulkContent, listVersions, getVersion,
   addMessage, listAdminRecipients, addAdminMessage, listMessages, updateMessage, permanentlyDeleteMessage, listUserReplies, getSettings, setSetting,
   getNavigation, saveNavigation, trashNavigation, permanentlyDeleteNavigation, listMedia, addMedia, trashMedia, permanentlyDeleteMedia, listMessageAttachments, getMessageAttachment,
-  listActivity, setUserActive, deleteUser, listSessions, revokeSession, publicSettings, backup
+  listActivity, setUserActive, deleteUser, listSessions, revokeSession, publicSettings, listStudentLessons, getStudentLesson, updateStudentLesson, backup
 };
