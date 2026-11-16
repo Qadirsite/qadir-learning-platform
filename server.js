@@ -371,7 +371,7 @@ async function handleApi(req, res, url) {
     try { secret = await db.getCsrfSecret(); } catch { return fail(res, 503, 'خدمة التخزين غير متاحة الآن.'); }
     if (!await requireCsrf(req, res, secret)) return;
     const uploadKey = String(req.headers['x-upload-key'] || '').trim();
-    if (!/^qadir\/(?:contact|messages|admin|site-lessons)\/[A-Za-z0-9._/-]{1,512}$/.test(uploadKey)) return fail(res, 400, 'مفتاح الرفع غير صالح.');
+    if (!/^qadir\/(?:contact|messages|admin|admin-ai|site-lessons)\/[A-Za-z0-9._/-]{1,512}$/.test(uploadKey)) return fail(res, 400, 'مفتاح الرفع غير صالح.');
     try {
       const uploadUrl = await adminApi.presignUpload(uploadKey);
       const chunks = [];

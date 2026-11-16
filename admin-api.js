@@ -11,6 +11,7 @@ const { URL } = require('node:url');
 const data = require('./admin-db');
 const db = require('./db');
 const chatAI = require('./llm');
+const { createAdminAgent } = require('./admin-agent');
 
 const CONTENT_KINDS = new Set(['lesson','resource','question','announcement','faq']);
 const CONTENT_STATUSES = new Set(['draft','published','archived']);
@@ -19,6 +20,7 @@ const TEACHING_FILE_TYPES = new Set(['application/pdf','text/plain','text/csv','
 function isTeachingFileType(type) { return TEACHING_FILE_TYPES.has(type) || type.startsWith('image/'); }
 const settingsKeys = new Set(['site_name','logo_url','contact_email','social_links','seo_description','maintenance_mode','maintenance_message','notification_templates']);
 const publicPages = new Set(['/','/chat.html','/library.html','/contact.html']);
+function isFullAdmin(user) { return user?.username === 'ak9' || user?.role === 'admin'; }
 const visitBuckets = new Map();
 const contactBuckets = new Map();
 const contactAttachmentBuckets = new Map();
@@ -253,6 +255,7 @@ function questionBody(item) {
   const explanation=String(item.explanation||'').trim();
   return `السؤال:\n${question}\n\n${options.length?`الخيارات:\n${options.map((value,index)=>`${index+1}) ${value}`).join('\n')}\n\n`:''}الإجابة:\n${answer}\n\nالشرح:\n${explanation}`.slice(0,30000);
 }
+const adminAgent = createAdminAgent({ data, chatAI, presignDownload, verifyStoredFile, extractPdfSourceText });
 
 async function handle(req,res,url,ctx) {
   const {method}=req;
@@ -322,6 +325,21 @@ async function handle(req,res,url,ctx) {
     if(path==='/api/admin/summary' && method==='GET') {
       const user=await auth(req,res,ctx,'dashboard.view'); if(!user) return true;
       return ctx.json(res,200,await data.dashboardSummary());
+    }
+    if(path==='/api/admin/ai/files/presign'&&method==='POST') {
+      const user=await auth(req,res,ctx,'media.manage'); if(!user) return true;
+      if(!isFullAdmin(user)) return ctx.fail(res,403,'رفع ملفات مساعد الإدارة متاح للمديرين الإداريين فقط.');
+      const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
+      const name=cleanText(body.name,255,{required:true}); const type=normalizedFileType(body.type); const size=Number(body.size);
+      if(!name||!type||!validFileSize(size)||size>30*1024*1024) return ctx.fail(res,400,'الملف غير صالح أو يتجاوز 30 ميغابايت.');
+      const key=`qadir/admin-ai/${crypto.randomUUID()}-${safeUploadName(name)}`;
+      return ctx.json(res,200,{uploadUrl:await presignUpload(key),key,path:`/manus-storage/${key}`});
+    }
+    if(path==='/api/admin/ai/command'&&method==='POST') {
+      const user=await auth(req,res,ctx,'content.view'); if(!user) return true;
+      const body=await bodyAndCsrf(req,res,ctx,160*1024); if(!body) return true;
+      try { return ctx.json(res,200,await adminAgent.run(user,body)); }
+      catch(error) { console.error('[admin-ai] command failed:',error?.message||error); return ctx.fail(res,502,error?.message||'تعذر تنفيذ أمر المساعد الإداري.'); }
     }
     if(path==='/api/admin/student-lessons' && method==='GET') {
       const user=await auth(req,res,ctx,'content.view'); if(!user) return true;

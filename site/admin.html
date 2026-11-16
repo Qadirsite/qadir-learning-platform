@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/admin-console.css">
   <link rel="stylesheet" href="/admin-attachments.css">
   <link rel="stylesheet" href="/student-lessons-admin.css">
+  <link rel="stylesheet" href="/admin-ai.css">
   <script src="/admin-page.js?v=1e78028" defer></script>
   <script src="/admin-console.js?v=trash-1" defer></script>
 </head>
@@ -31,6 +32,7 @@
         <button class="nav-item active" type="button" data-section="dashboard" data-permission="dashboard.view">الرئيسية</button>
         <button class="nav-item" type="button" data-section="content" data-permission="content.view">المحتوى التعليمي</button>
         <button class="nav-item" type="button" data-section="site-lessons" data-permission="content.manage">دروس الموقع</button>
+        <button class="nav-item" type="button" data-section="admin-ai" data-permission="content.view">مساعد الإدارة الذكي</button>
         <button class="nav-item" type="button" data-section="users" data-permission="users.view">المستخدمون والرتب</button>
         <button class="nav-item" type="button" data-section="statistics" data-permission="dashboard.view">الإحصاءات</button>
         <button class="nav-item" type="button" data-section="messages" data-permission="messages.view">الرسائل <span id="message-badge" class="nav-badge" hidden></span></button>
@@ -109,6 +111,10 @@
           <section id="site-lessons-preview" class="panel" hidden aria-labelledby="site-lessons-preview-title"><div class="list-head"><div><h2 id="site-lessons-preview-title">معاينة الناتج قبل الحفظ</h2><span id="site-lessons-preview-note" class="list-note"></span></div><div class="data-card-actions"><button id="site-lessons-commit" class="button primary" type="button">حفظ المعاينة</button><button id="site-lessons-cancel" class="button" type="button">إلغاء</button></div></div><div id="site-lessons-preview-list" class="card-list" aria-live="polite"></div></section>
           <section class="panel"><div class="list-head"><div><h2>محتوى دروس الموقع</h2><span class="list-note">عدّل أي درس أو سؤال من هنا، مع الاحتفاظ بإصداراته السابقة.</span></div><div class="data-card-actions"><button id="site-lessons-publish-drafts" class="button primary" type="button">نشر المسودات الحالية</button><button id="site-lessons-refresh" class="button" type="button">تحديث</button></div></div><div id="site-lessons-list" class="card-list" aria-live="polite"></div></section>
           <section class="panel student-lessons-manager"><div class="list-head"><div><h2>دروس نسخة الطالب — 37 درسًا</h2><span class="list-note">عدّل عنوان أي درس ووصفه وأضف رابط يوتيوب اختياريًا. إذا تركت العنوان فارغًا سيقترح الذكاء الاصطناعي عنوانًا تلقائيًا.</span></div><button id="student-lessons-refresh" class="button" type="button">تحديث</button></div><div id="student-lessons-list" class="student-lessons-list" aria-live="polite"></div></section>
+        </section>
+        <section id="section-admin-ai" data-admin-section="admin-ai" class="admin-section" hidden aria-labelledby="admin-ai-title">
+          <div class="section-heading"><div><div class="eyebrow">تنفيذ سريع بصلاحيات محكومة</div><h1 id="admin-ai-title">مساعد الإدارة الذكي</h1><p>أرسل أمرًا مع ملف أو صورة أو صوت. يستطيع حفظ الملفات وقراءة المرفقات وتجهيز الدروس ونشرها بعد تأكيدك.</p></div></div>
+          <section class="panel admin-ai-panel"><div id="admin-ai-log" class="admin-ai-log" aria-live="polite"><div class="admin-ai-message assistant">مرحبًا. اطلب مثلًا: «احفظ هذا الملف في مدير الملفات» أو «حوّل هذا الـPDF إلى درس وانشره بعد أن أراجعه».</div></div><form id="admin-ai-form" class="admin-ai-form"><label class="field-wrap full"><span>الأمر</span><textarea id="admin-ai-input" rows="4" maxlength="3000" placeholder="ماذا تريد من المساعد؟"></textarea></label><label class="button admin-ai-attach" for="admin-ai-files">إرفاق ملفات أو صور أو صوت<input id="admin-ai-files" type="file" multiple accept="*/*"></label><button id="admin-ai-record" class="button" type="button">تسجيل صوت</button><span id="admin-ai-file-list" class="admin-ai-file-list"></span><div class="form-actions full"><button id="admin-ai-send" class="button primary" type="submit">إرسال إلى المساعد</button><span id="admin-ai-status" class="muted" role="status"></span></div></form></section>
         </section>
         <section id="section-users" data-admin-section="users" class="admin-section" hidden aria-labelledby="users-title">
           <div class="section-heading"><div><div class="eyebrow">الطلاب والصلاحيات</div><h1 id="users-title">المستخدمون والرتب</h1><p>اضغط «ترقية إلى» بجوار اسم الحساب لعرض الرتب المسموحة. الحالة والرتبة يحميهما الخادم وفق صلاحيتك.</p></div></div>
