@@ -1,0 +1,26 @@
+/*
+ * Qadir quiz paths
+ * Lightweight geometric shapes keep the page fast while giving each exam path
+ * a visual identity inspired by open-source education dashboards.
+ */
+.qadir-quiz-shell{position:relative;isolation:isolate;overflow:hidden}
+.qadir-quiz-shell::before{content:"";position:absolute;inset:0 0 auto 0;height:220px;pointer-events:none;z-index:-1;background:radial-gradient(circle at 12% 5%,rgba(16,185,129,.14),transparent 28%),radial-gradient(circle at 94% 18%,rgba(59,130,246,.13),transparent 26%)}
+.qadir-quiz-hero{position:relative;overflow:hidden;border-radius:32px;background:linear-gradient(135deg,#063f32 0%,#087b5d 54%,#0d9488 100%);color:#fff;box-shadow:0 22px 60px rgba(6,78,59,.22)}
+.qadir-quiz-hero::after{content:"";position:absolute;inset:auto -54px -92px auto;width:250px;height:250px;border:1px solid rgba(255,255,255,.2);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.05),0 0 0 58px rgba(255,255,255,.04);pointer-events:none}
+.qadir-quiz-shape{position:absolute;pointer-events:none;opacity:.92}
+.qadir-quiz-shape-grid{left:22px;bottom:20px;width:116px;height:76px;opacity:.2;background-image:linear-gradient(rgba(255,255,255,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.8) 1px,transparent 1px);background-size:19px 19px;transform:skewY(-8deg);mask-image:linear-gradient(90deg,transparent,#000 25%,#000 78%,transparent)}
+.qadir-quiz-shape-star{right:27%;top:22px;width:20px;height:20px;background:#fcd34d;clip-path:polygon(50% 0,61% 36%,100% 36%,69% 58%,80% 100%,50% 73%,20% 100%,31% 58%,0 36%,39% 36%);filter:drop-shadow(0 5px 8px rgba(0,0,0,.18));transform:rotate(18deg)}
+.qadir-quiz-shape-ring{right:16%;top:44px;width:48px;height:48px;border:2px solid rgba(255,255,255,.5);border-radius:50%;box-shadow:0 0 0 8px rgba(255,255,255,.08)}
+.qadir-quiz-path-card{position:relative;overflow:hidden;min-height:188px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.qadir-quiz-path-card::before{content:"";position:absolute;inset:auto -28px -56px auto;width:128px;height:128px;border-radius:38% 62% 56% 44%;background:var(--quiz-tint,rgba(16,185,129,.12));transform:rotate(22deg);pointer-events:none}
+.qadir-quiz-path-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(15,23,42,.12);border-color:rgba(16,185,129,.65)}
+.qadir-quiz-path-card>*{position:relative;z-index:1}
+.qadir-quiz-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:17px;background:var(--quiz-icon-bg,#dcfce7);color:var(--quiz-icon-color,#047857);font-size:25px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.qadir-quiz-unit-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(148,163,184,.35);border-radius:999px;padding:4px 9px;font-size:10px;font-weight:800;background:rgba(248,250,252,.78);color:#475569}
+.qadir-quiz-mini-stat{border:1px solid rgba(148,163,184,.24);background:rgba(255,255,255,.1);border-radius:16px;padding:10px 13px;min-width:92px}
+.qadir-quiz-back{border:0;background:transparent;color:inherit;font-weight:900;cursor:pointer;padding:3px 0}
+[data-qadir-theme="dark"] .qadir-quiz-path-card{background:#0f172a!important;border-color:#334155!important}
+[data-qadir-theme="dark"] .qadir-quiz-unit-pill{background:rgba(30,41,59,.9);color:#cbd5e1;border-color:#475569}
+[data-qadir-theme="dark"] .qadir-quiz-path-card::before{opacity:.35}
+@media(max-width:640px){.qadir-quiz-hero{border-radius:25px}.qadir-quiz-hero::after{width:190px;height:190px;right:-64px;bottom:-76px}.qadir-quiz-shape-grid{left:-18px;bottom:16px;transform:scale(.8) skewY(-8deg)}.qadir-quiz-path-card{min-height:172px}.qadir-quiz-icon{width:43px;height:43px;border-radius:15px;font-size:22px}.qadir-quiz-mini-stat{min-width:0;flex:1;padding:9px 8px}}
+@media(prefers-reduced-motion:reduce){.qadir-quiz-path-card{transition:none}.qadir-quiz-path-card:hover{transform:none}}
