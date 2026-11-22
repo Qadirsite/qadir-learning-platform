@@ -19,9 +19,9 @@
     tag.textContent = labels[item.kind] || 'محتوى';
     const title = document.createElement('h2');
     title.textContent = item.title_ar;
-    const text = String(item.body_ar || '');
+    const text = String(item.summary_ar || item.body_ar || '');
     const excerpt = document.createElement('p');
-    excerpt.textContent = text.slice(0, 220) + (text.length > 220 ? '…' : '');
+    excerpt.textContent = item.summary_ar ? `ملخص بالذكاء الاصطناعي: ${text.slice(0, 220)}${text.length > 220 ? '…' : ''}` : text.slice(0, 220) + (text.length > 220 ? '…' : '');
     const open = document.createElement('a');
     open.href = `/content/${encodeURIComponent(item.slug)}`;
     open.className = 'button';

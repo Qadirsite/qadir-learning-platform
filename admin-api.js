@@ -11,6 +11,7 @@ const { URL } = require('node:url');
 const data = require('./admin-db');
 const db = require('./db');
 const chatAI = require('./llm');
+const { generateLessonSummary, sourceHash } = require('./lesson-summary');
 const { createAdminAgent } = require('./admin-agent');
 
 const CONTENT_KINDS = new Set(['lesson','resource','question','announcement','faq']);
@@ -24,6 +25,7 @@ function isFullAdmin(user) { return user?.username === 'ak9' || user?.role === '
 const visitBuckets = new Map();
 const contactBuckets = new Map();
 const contactAttachmentBuckets = new Map();
+const summaryJobs = new Map();
 
 function cleanText(value, max, { required = false } = {}) {
   if (typeof value !== 'string') return required ? null : '';
@@ -104,6 +106,26 @@ function normalizedContent(body) {
     category, tags, cover_url:cover || null, status, seo_title_ar:seoTitleAr || null, seo_title_en:seoTitleEn || null,
     seo_description_ar:seoDescriptionAr || null, seo_description_en:seoDescriptionEn || null, publish_at:publishAt };
 }
+function queueLessonSummary(id, { force = false } = {}) {
+  const lessonId = safeId(id);
+  if (!lessonId || summaryJobs.has(lessonId)) return;
+  const job = (async () => {
+    try {
+      const lesson = await data.getLessonForSummary(lessonId);
+      if (!lesson) return;
+      const expectedHash = sourceHash(lesson.title_ar, lesson.body_ar);
+      if (!force && lesson.summary_status === 'completed' && lesson.summary_source_hash === expectedHash) return;
+      await data.markSummaryPending([lessonId]);
+      const generated = await generateLessonSummary(lesson.title_ar, lesson.body_ar);
+      await data.saveLessonSummary(lessonId, generated.sourceHash, generated.text);
+    } catch (error) {
+      console.error('[lesson-summary] generation failed:', error?.message || error);
+      try { await data.saveLessonSummaryError(lessonId, error); } catch (saveError) { console.error('[lesson-summary] status update failed:', saveError?.message || saveError); }
+    } finally { summaryJobs.delete(lessonId); }
+  })();
+  summaryJobs.set(lessonId, job);
+}
+function queueLessonSummaries(ids) { for (const id of ids || []) queueLessonSummary(id); }
 const CONTENT_CSV_COLUMNS=['kind','slug','title_ar','title_en','body_ar','body_en','category','tags','status','cover_url','publish_at','seo_title_ar','seo_title_en','seo_description_ar','seo_description_en'];
 function parseCsv(text) {
   if(typeof text!=='string'||Buffer.byteLength(text,'utf8')>1024*1024) return null;
@@ -397,7 +419,7 @@ async function handle(req,res,url,ctx) {
       if(!await verifyStoredFile(key,size)) return ctx.fail(res,400,'انتهت صلاحية الملف أو لم يعد موجودًا.');
       const status='published'; const items=body.items.map(item=>normalizedContent({...item,status,body_ar:item.kind==='question'?questionBody(item):item.body_ar}));
       if(items.some(item=>!item)) return ctx.fail(res,400,'تعذر التحقق من أحد عناصر المعاينة.');
-      try { const result=await data.importContent(user,items); await data.addMedia(user,{name,key,type,size}); return ctx.json(res,201,{imported:result.imported,ids:result.ids,message:status==='published'?'تم حفظ المعاينة ونشر المحتوى.':'تم حفظ المعاينة كمسودة.'}); }
+      try { const result=await data.importContent(user,items); await data.addMedia(user,{name,key,type,size}); queueLessonSummaries(result.ids); return ctx.json(res,201,{imported:result.imported,ids:result.ids,message:status==='published'?'تم حفظ المعاينة ونشر المحتوى.':'تم حفظ المعاينة كمسودة.'}); }
       catch(error) { if(error.code==='ER_DUP_ENTRY') return ctx.fail(res,409,'يوجد رابط مكرر في المعاينة. أعد التحليل للحصول على روابط جديدة.'); throw error; }
     }
     if(path==='/api/admin/content' && method==='GET') {
@@ -412,7 +434,7 @@ async function handle(req,res,url,ctx) {
       const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;
       const body=await bodyAndCsrf(req,res,ctx,1400*1024); if(!body) return true;
       const items=parseCsv(body.csv); if(!items) return ctx.fail(res,400,'ملف CSV غير صالح؛ استخدم القالب الذي تصدّره قادر وتحقق من الحقول والحد البالغ 100 عنصر.');
-      try { return ctx.json(res,201,await data.importContent(user,items)); }
+      try { const result=await data.importContent(user,items); queueLessonSummaries(result.ids); return ctx.json(res,201,result); }
       catch(error) { if(error.code==='ER_DUP_ENTRY') return ctx.fail(res,409,'تعذر الاستيراد لأن رابطًا مكررًا موجود. لم يُحفظ أي صف.'); throw error; }
     }
     if(path==='/api/admin/content' && method==='POST') {
@@ -420,6 +442,7 @@ async function handle(req,res,url,ctx) {
       const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
       const item=normalizedContent(body); if(!item) return ctx.fail(res,400,'تحقق من الحقول المطلوبة ونوع المحتوى وحالة النشر والرابط.');
       const result=await data.createContent(user,item);
+      queueLessonSummary(result.id);
       return ctx.json(res,201,{id:result.id});
     }
     if(path==='/api/admin/content/bulk' && method==='POST') {
@@ -427,12 +450,26 @@ async function handle(req,res,url,ctx) {
       const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
       if(!Array.isArray(body.ids)||body.ids.length<1||body.ids.length>50||body.ids.some(id=>!safeId(id))) return ctx.fail(res,400,'حدد من 1 إلى 50 عنصرًا صالحًا.');
       if(!['publish','archive','trash'].includes(body.action)) return ctx.fail(res,400,'الإجراء الجماعي غير صالح.');
-      return ctx.json(res,200,{updated:await data.bulkContent(user,[...new Set(body.ids.map(Number))],body.action)});
+      const ids=[...new Set(body.ids.map(Number))]; const updated=await data.bulkContent(user,ids,body.action);
+      if(body.action==='publish') queueLessonSummaries(ids);
+      return ctx.json(res,200,{updated});
     }
-    const contentRoute=path.match(/^\/api\/admin\/content\/(\d+)(?:\/(versions|restore|restore-version|permanent))?$/);
+    const contentRoute=path.match(/^\/api\/admin\/content\/(\d+)(?:\/(versions|summary|restore|restore-version|permanent))?$/);
     if(contentRoute) {
       const id=safeId(contentRoute[1]); if(!id) return ctx.fail(res,400,'معرّف المحتوى غير صالح.');
       const sub=contentRoute[2]||'';
+      if(method==='GET'&&sub==='summary') {
+        const user=await auth(req,res,ctx,'content.view'); if(!user) return true;
+        const summary=await data.getSummaryStatus(id); if(!summary) return ctx.fail(res,404,'الدرس غير موجود.');
+        return ctx.json(res,200,summary);
+      }
+      if(method==='POST'&&sub==='summary') {
+        const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;
+        const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
+        const summary=await data.getSummaryStatus(id); if(!summary) return ctx.fail(res,404,'الدرس غير موجود.');
+        queueLessonSummary(id,{force:true});
+        return ctx.json(res,202,{queued:true,status:'pending',message:'بدأت إعادة إنشاء ملخص الدرس.'});
+      }
       if(method==='GET'&&sub==='versions') {
         const user=await auth(req,res,ctx,'content.view'); if(!user) return true;
         return ctx.json(res,200,{versions:await data.listVersions(id)});
@@ -453,13 +490,15 @@ async function handle(req,res,url,ctx) {
         const snapshot=await data.getVersion(id,safeId(body.versionId));
         if(!snapshot) return ctx.fail(res,404,'الإصدار غير موجود.');
         const item=normalizedContent(snapshot); if(!item) return ctx.fail(res,409,'لا يمكن استعادة هذا الإصدار.');
-        return ctx.json(res,200,{restored:await data.updateContent(user,id,item)});
+        const restored=await data.updateContent(user,id,item); if(restored&&item.kind==='lesson') queueLessonSummary(id);
+        return ctx.json(res,200,{restored});
       }
       if(method==='PUT'&&!sub) {
         const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;
         const body=await bodyAndCsrf(req,res,ctx); if(!body) return true;
         const item=normalizedContent(body); if(!item) return ctx.fail(res,400,'تحقق من الحقول المطلوبة ونوع المحتوى وحالة النشر والرابط.');
-        return ctx.json(res,200,{updated:await data.updateContent(user,id,item)});
+        const updated=await data.updateContent(user,id,item); if(updated&&item.kind==='lesson') queueLessonSummary(id);
+        return ctx.json(res,200,{updated});
       }
       if(method==='DELETE'&&!sub) {
         const user=await auth(req,res,ctx,'content.manage'); if(!user) return true;

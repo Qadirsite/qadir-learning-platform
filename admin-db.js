@@ -66,7 +66,7 @@ async function listContent({ search = '', kind = '', status = '', trash = false,
   return { items: rows.map(rowContent), total: Number(count.total) || 0 };
 }
 async function getContentBySlug(slug) {
-  const [rows] = await pool().execute(`SELECT id,kind,slug,title_ar,title_en,body_ar,body_en,category,tags,cover_url,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,publish_at,created_at,updated_at
+  const [rows] = await pool().execute(`SELECT id,kind,slug,title_ar,title_en,body_ar,body_en,summary_ar,summary_status,summary_generated_at,category,tags,cover_url,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,publish_at,created_at,updated_at
     FROM admin_content WHERE slug = ? AND deleted_at IS NULL AND status = 'published' AND (publish_at IS NULL OR publish_at <= UTC_TIMESTAMP()) LIMIT 1`, [slug]);
   return rows[0] ? rowContent(rows[0]) : null;
 }
@@ -74,7 +74,7 @@ async function listPublicContent({ kind = '', limit = 30, offset = 0 }) {
   const params = [];
   const kindFilter = kind ? ' AND kind = ?' : '';
   if (kind) params.push(kind);
-  const [rows] = await pool().execute(`SELECT id,kind,slug,title_ar,title_en,body_ar,body_en,category,tags,cover_url,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,publish_at,created_at,updated_at
+  const [rows] = await pool().execute(`SELECT id,kind,slug,title_ar,title_en,body_ar,body_en,summary_ar,summary_status,summary_generated_at,category,tags,cover_url,seo_title_ar,seo_title_en,seo_description_ar,seo_description_en,publish_at,created_at,updated_at
     FROM admin_content WHERE deleted_at IS NULL AND status = 'published' AND (publish_at IS NULL OR publish_at <= UTC_TIMESTAMP())${kindFilter}
     ORDER BY COALESCE(publish_at,updated_at) DESC,id DESC LIMIT ${safeLimit(limit, 100)} OFFSET ${safeOffset(offset)}`, params);
   return rows.map(rowContent);
@@ -149,6 +149,35 @@ async function bulkContent(actor, ids, action) {
   const [result] = await pool().execute(query, [actor.id, ...ids]);
   if (result.affectedRows) await logActivity(actor, `content.bulk.${action}`, 'content', null, { count: result.affectedRows });
   return result.affectedRows;
+}
+async function markSummaryPending(ids) {
+  const unique = [...new Set((ids || []).map(Number).filter(id => Number.isSafeInteger(id) && id > 0))];
+  if (!unique.length) return 0;
+  const placeholders = unique.map(() => '?').join(',');
+  const [result] = await pool().execute(`UPDATE admin_content SET summary_status='pending', summary_error=NULL, summary_generated_at=NULL
+    WHERE id IN (${placeholders}) AND kind='lesson' AND deleted_at IS NULL`, unique);
+  return result.affectedRows;
+}
+async function getLessonForSummary(id) {
+  const [rows] = await pool().execute(`SELECT id,kind,title_ar,body_ar,summary_status,summary_source_hash
+    FROM admin_content WHERE id=? AND kind='lesson' AND deleted_at IS NULL LIMIT 1`, [id]);
+  return rows[0] ? { ...rows[0], id:Number(rows[0].id) } : null;
+}
+async function saveLessonSummary(id, sourceHash, summary) {
+  const [result] = await pool().execute(`UPDATE admin_content SET summary_ar=?, summary_status='completed', summary_generated_at=UTC_TIMESTAMP(), summary_error=NULL, summary_source_hash=?
+    WHERE id=? AND kind='lesson' AND deleted_at IS NULL AND SHA2(CONCAT(title_ar, '\n', body_ar), 256)=?`, [summary, sourceHash, id, sourceHash]);
+  return result.affectedRows > 0;
+}
+async function saveLessonSummaryError(id, error) {
+  const message = String(error?.message || 'تعذر إنشاء الملخص.').replace(/[\r\n]+/g, ' ').slice(0, 500);
+  const [result] = await pool().execute(`UPDATE admin_content SET summary_status='failed', summary_error=?
+    WHERE id=? AND kind='lesson' AND deleted_at IS NULL`, [message, id]);
+  return result.affectedRows > 0;
+}
+async function getSummaryStatus(id) {
+  const [rows] = await pool().execute(`SELECT id,title_ar,summary_ar,summary_status,summary_generated_at,summary_error
+    FROM admin_content WHERE id=? AND kind='lesson' AND deleted_at IS NULL LIMIT 1`, [id]);
+  return rows[0] ? { ...rows[0], id:Number(rows[0].id) } : null;
 }
 async function listVersions(id) {
   const [rows] = await pool().execute(`SELECT id,version_no,created_at,created_by FROM admin_content_versions WHERE content_id = ? ORDER BY version_no DESC LIMIT 50`, [id]);
@@ -428,7 +457,7 @@ async function backup() {
 
 module.exports = {
   logActivity, dashboardSummary, recordVisit, listContent, getContentBySlug, listPublicContent,
-  createContent, importContent, updateContent, setContentTrash, permanentlyDeleteContent, bulkContent, listVersions, getVersion,
+  createContent, importContent, updateContent, bulkContent, markSummaryPending, getLessonForSummary, saveLessonSummary, saveLessonSummaryError, getSummaryStatus, updateContent, setContentTrash, permanentlyDeleteContent, listVersions, getVersion,
   addMessage, listAdminRecipients, addAdminMessage, listMessages, updateMessage, permanentlyDeleteMessage, listUserReplies, getSettings, setSetting,
   getNavigation, saveNavigation, trashNavigation, permanentlyDeleteNavigation, listMedia, addMedia, trashMedia, permanentlyDeleteMedia, listMessageAttachments, getMessageAttachment,
   listActivity, setUserActive, deleteUser, listSessions, revokeSession, publicSettings, listStudentLessons, getStudentLesson, updateStudentLesson, backup
