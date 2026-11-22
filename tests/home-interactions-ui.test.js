@@ -76,3 +76,18 @@ test('home page exposes focused SEO metadata within the required limits', () => 
   assert.ok(description.length >= 50 && description.length <= 160);
   assert.ok(keywords.length >= 3 && keywords.length <= 8);
 });
+
+test('expanded question bank keeps original questions, source metadata and unit filters', () => {
+  assert.match(index, /const newQuestionBank=\[/);
+  assert.match(index, /const questionBank=ee\.concat\(newQuestionBank\)/);
+  assert.match(index, /sourceUrl:"https:\/\/etec\.gov\.sa\/ar\/programs\/mustaqbalhum"/);
+  assert.match(index, /sourceUrl:"https:\/\/www\.iau\.edu\.sa\/sites\/default\/files\/resources\/achievement_test_preparation_guide_first_edition_2022-2023\.pdf"/);
+  assert.match(index, /questionBank\.filter\(\(question\)=>question\.type==="قدرات"&&question\.section==="كمي"/);
+  assert.match(index, /أضفنا .* سؤالًا أصليًا مصنفًا حسب القسم والوحدة/);
+});
+
+test('the main app has a visible runtime fallback instead of an empty root', () => {
+  assert.match(index, /class QadirErrorBoundary extends Wf\.default\.Component/);
+  assert.match(index, /تعذر عرض هذا القسم/);
+  assert.match(index, /window\.location\.reload\(\)/);
+});
